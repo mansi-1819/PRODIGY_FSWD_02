@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Animation for smooth fade-in */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-in {
+        animation: fadeIn 1s ease-out;
+      }
+
+      /* Hover effects for cards and buttons */
+      .hover-card:hover {
+        transform: translateY(-10px);
+        transition: transform 0.3s ease-in-out;
+      }
+      .hover-btn:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease-out;
+      }
+      .hover-img:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease-out;
+      }
+
+      /* Glow effect */
+      .hover-glow:hover {
+        box-shadow: 0 0 15px rgba(56, 189, 248, 1);
+        transition: box-shadow 0.3s ease;
+      }
+
+      /* Custom font */
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen p-10">
+
+    <!-- Header Section -->
+    <div class="flex justify-between items-center mb-12 animate-fade-in">
+      <!-- Welcome Text -->
+      <h1 class="text-4xl font-extrabold text-white">
+        Welcome, <span class="text-blue-500"><%= user.name %></span>! 👋
+      </h1>
+      <!-- Logout Button -->
+      <a
+        href="/logout"
+        class="bg-gradient-to-r from-red-500 to-pink-500 text-sm px-6 py-3 rounded-full shadow-lg hover-btn"
+      >
+        Logout
+      </a>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="flex items-center gap-8 bg-gradient-to-br from-zinc-800 to-zinc-700 p-8 rounded-xl shadow-xl animate-fade-in mb-12 hover-card">
+      <!-- Profile Picture -->
+      <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg hover-img">
+        <img
+          src="/images/uploads/<%= user.profilepic %>"
+          alt="Profile Picture"
+          class="w-full h-full object-cover"
+        />
+      </div>
+      <!-- Greeting and Bio -->
+      <div>
+        <h2 class="text-3xl font-semibold mb-2 text-white">
+          Hello, <span class="text-blue-400"><%= user.name %></span>!
+        </h2>
+        <p class="text-sm text-gray-300 mb-4">
+          Welcome back! What’s on your mind today? Share your thoughts with the world.
+        </p>
+       
+      </div>
+    </div>
+
+    <!-- Create Post Section -->
+    <div class="animate-fade-in mb-12">
+      <h2 class="text-2xl text-gray-300 mb-4">Create a New Post</h2>
+      <form method="post" action="/post" class="space-y-4">
+        <textarea
+          name="content"
+          placeholder="Write something exciting..."
+          class="w-full max-w-2xl p-6 bg-zinc-800 border border-zinc-700 rounded-lg shadow-lg resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all duration-300"
+          rows="6"
+          required
+        ></textarea>
+        <br />
+        <button
+          type="submit"
+          class="bg-gradient-to-r from-blue-500 to-teal-500 px-6 py-3 text-sm font-semibold rounded-lg shadow-lg hover-btn"
+        >
+          Post Now
+        </button>
+      </form>
+    </div>
+
+    <!-- Posts Section -->
+    <div class="mt-16 animate-fade-in">
+      <h2 class="text-2xl text-gray-400 mb-6">Your Posts</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% user.posts.reverse().forEach(function(post) { %>
+          <div
+            class="p-6 bg-gradient-to-br from-zinc-800 to-gray-700 rounded-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 hover:bg-gray-800"
+          >
+            <!-- Post Header -->
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-xl text-blue-400 font-semibold transition-all duration-200 transform hover:text-blue-500 hover:scale-105">
+                <%= user.name %>
+              </h3>
+              <span
+                class="text-xs bg-blue-500 text-white px-3 py-1 rounded-full shadow-md transition-all duration-200"
+              >
+                <%= post.likes.length %> Likes
+              </span>
+            </div>
+      
+            <!-- Post Content -->
+            <p class="mt-2 text-gray-300 text-sm leading-relaxed font-medium">
+              <%= post.content %>
+            </p>
+      
+            <!-- Actions -->
+            <div class="flex justify-between items-center mt-6 space-x-4">
+              <!-- Like Button with Dynamic State -->
+              <a
+                href="/like/<%= post._id %>"
+                class="text-blue-400 font-semibold transition-all duration-300 hover:text-blue-500 hover:underline transform hover:scale-105"
+              >
+                <%= post.likes.indexOf(user._id) === -1 ? "Like" : "Unlike" %>
+              </a>
+      
+              <!-- Edit Button with Animation -->
+              <a
+                href="/edit/<%= post._id %>"
+                class="text-white bg-gradient-to-r from-teal-500 to-purple-500 px-6 py-2 rounded-md shadow-lg hover:scale-105 transform transition-all duration-300 hover:bg-gradient-to-r from-purple-500 to-teal-500"
+              >
+                Edit
+              </a>
+
+              <a
+                href="/delete/<%= post._id %>"
+                class="text-white bg-gradient-to-r from-teal-500 to-purple-500 px-6 py-2 rounded-md shadow-lg hover:scale-105 transform transition-all duration-300 hover:bg-gradient-to-r from-purple-500 to-teal-500"
+              >
+                Delete
+              </a>
+
+            </div>
+          </div>
+        <% }) %>
+      </div>
+      
+      
+    </div>
+
+
+  </body>
+</html>
